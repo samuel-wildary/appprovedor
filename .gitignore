@@ -1,6 +1,8 @@
 node_modules/
 dist/
-.env
-.env.*
-!.env.example
 *.log
+dashboard/node_modules/
+dashboard/dist/
+dashboard/.env
+dashboard/.env.*
+!dashboard/.env.example
