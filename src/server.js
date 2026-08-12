@@ -121,7 +121,8 @@ app.get('/api/admin/providers', requireAdmin, async (req, res) => {
 });
 
 app.post('/api/admin/providers', requireAdmin, async (req, res) => {
-  const { tenant, name, email, phone, status, sgp } = req.body;
+  const { name, email, phone, status, sgp } = req.body;
+  const tenant = req.body.tenant?.trim() || `prov_${crypto.randomBytes(5).toString('hex')}`;
   const id = crypto.randomUUID();
   try {
     const sgpConfig = encryptProviderConfig({

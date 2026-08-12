@@ -117,7 +117,7 @@ export default function Dashboard() {
                   <tr key={prov.id}>
                     <td>
                       <div style={{ fontWeight: '500', color: 'white' }}>{prov.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>ID: {prov.id.split('-')[0]}...</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Código: {prov.tenant || prov.id.split('-')[0]}</div>
                     </td>
                     <td>
                       <div>{prov.email}</div>
@@ -152,8 +152,8 @@ export default function Dashboard() {
             <h2 style={{ marginBottom: '1.5rem' }}>Cadastrar Provedor</h2>
             <form onSubmit={handleCreate}>
               <div className="input-group">
-                <label className="input-label">Tenant do aplicativo</label>
-                <input type="text" className="input-field" placeholder="acesseweb" value={newProv.tenant} onChange={e => setNewProv({...newProv, tenant: e.target.value})} required />
+                <label className="input-label">Código do aplicativo (opcional)</label>
+                <input type="text" className="input-field" placeholder="Será gerado automaticamente" value={newProv.tenant} onChange={e => setNewProv({...newProv, tenant: e.target.value})} />
               </div>
               <div className="input-group">
                 <label className="input-label">Nome da Empresa</label>
