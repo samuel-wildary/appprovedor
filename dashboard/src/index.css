@@ -328,15 +328,38 @@ select.input-field option {
   position: fixed; inset: 0;
   background: rgba(0,0,0,0.6);
   backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: flex-start; justify-content: center;
   z-index: 50;
   padding: 1.5rem;
+  overflow-y: auto;
 }
 
 .modal-panel {
   width: 100%; max-width: 520px; padding: 2rem;
   max-height: calc(100vh - 3rem);
   overflow-y: auto;
+  margin: auto 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+}
+
+.modal-panel h2 {
+  position: sticky;
+  top: -2rem;
+  z-index: 2;
+  padding: 1.5rem 0 1rem;
+  margin: -2rem 0 1.5rem !important;
+  background: #1e293b;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.modal-panel form > div:last-child {
+  position: sticky;
+  bottom: -2rem;
+  margin: 2rem -2rem -2rem;
+  padding: 1rem 2rem;
+  background: rgba(15, 23, 42, 0.96);
+  border-top: 1px solid var(--surface-border);
 }
 
 .select-compact { width: auto; padding: 0.4rem 2rem 0.4rem 0.8rem; font-size: 0.875rem; }

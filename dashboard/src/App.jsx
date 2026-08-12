@@ -10,7 +10,7 @@ import { LogOut, Activity, LayoutDashboard, Building2, Layers, CreditCard, Scrol
 
 const NAV = [
   { id: 'overview', label: 'Visão Geral', icon: LayoutDashboard },
-  { id: 'providers', label: 'Provedores', icon: Building2 },
+  { id: 'providers', label: 'Gestão de Provedores', icon: Building2 },
   { id: 'plans', label: 'Planos', icon: Layers },
   { id: 'payments', label: 'Pagamentos', icon: CreditCard },
   { id: 'audit', label: 'Auditoria', icon: ScrollText },
