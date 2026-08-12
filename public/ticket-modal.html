@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte Técnico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px 8px;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            animation: fadeIn 0.4s ease-out;
+            box-sizing: border-box;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .icon {
+            width: 56px;
+            height: 56px;
+            background: #eff6ff;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        .icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        select, textarea {
+            width: 100%;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+        
+        select option {
+            background: #ffffff;
+            color: var(--text-main);
+        }
+
+        select:focus, textarea:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+        }
+
+        .btn:disabled {
+            background: #cbd5e1;
+            color: #f8fafc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .success-state {
+            display: none;
+            text-align: center;
+        }
+        .success-state svg {
+            width: 72px;
+            height: 72px;
+            color: #10b981;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="formContainer">
+        <div class="header">
+            <div class="icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h1>Abrir Chamado</h1>
+            <p>Descreva seu problema para que nossa equipe técnica possa ajudar.</p>
+        </div>
+        
+        <div class="form-group">
+            <label for="assunto">Assunto do Chamado</label>
+            <select id="assunto">
+                <option value="1">Sem Conexão / Internet Caiu</option>
+                <option value="2">Lentidão / Travamentos</option>
+                <option value="3">Dúvida Financeira</option>
+                <option value="4">Alteração de Senha / Wi-Fi</option>
+                <option value="5">Outros</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="mensagem">Mensagem</label>
+            <textarea id="mensagem" placeholder="Descreva os detalhes da sua solicitação..."></textarea>
+        </div>
+        
+        <button class="btn" id="submitBtn" onclick="enviarChamado()">Enviar Solicitação</button>
+    </div>
+    
+    <div class="container success-state" id="successContainer">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <h1 style="color: #0f172a;">Chamado Aberto!</h1>
+        <p>Sua solicitação foi registrada com sucesso. Em breve nossa equipe entrará em contato.</p>
+        <button class="btn" onclick="fecharJanela()" style="margin-top: 24px; background: #e2e8f0; color: #334155; box-shadow: none;">OK</button>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const cpfcnpj = urlParams.get('document') || '';
+        
+        function enviarChamado() {
+            const assunto = document.getElementById('assunto').value;
+            const mensagem = document.getElementById('mensagem').value;
+            const btn = document.getElementById('submitBtn');
+            
+            if(!mensagem.trim()) {
+                alert("Por favor, digite uma mensagem.");
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = "Enviando...";
+            
+            fetch('/api/central/chamado/novo/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    cpfcnpj, 
+                    conteudo: mensagem, 
+                    tipo_ocorrencia: assunto 
+                })
+            }).then(r => {
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('successContainer').style.display = 'block';
+            }).catch(e => {
+                btn.disabled = false;
+                btn.textContent = "Enviar Solicitação";
+                alert("Erro de conexão. Tente novamente.");
+            });
+        }
+        
+        function fecharJanela() {
+            document.body.innerHTML = '<div style="color:#64748b;text-align:center;margin-top:50px;">Pode fechar esta janela tocando fora ou no botão Voltar.</div>';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIX Copia e Cola</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 16px 8px;
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: fadeIn 0.4s ease-out;
+            box-sizing: border-box;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .icon {
+            width: 56px;
+            height: 56px;
+            background: #ecfdf5;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 16px;
+            color: var(--primary);
+        }
+
+        .icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        p {
+            margin: 0 0 24px;
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .pix-code {
+            background: #f1f5f9;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 14px;
+            word-break: break-all;
+            margin-bottom: 24px;
+            color: #334155;
+            user-select: all;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 20px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .toast.show {
+            bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="icon">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-5.5l7.5-7.5-1.42-1.42L10 11.67l-2.08-2.08L6.5 11l3.5 3.5z"/></svg>
+        </div>
+        <h1>Pagamento PIX</h1>
+        <p>Copie o código abaixo e cole no aplicativo do seu banco para efetuar o pagamento.</p>
+        
+        <div class="pix-code" id="pixCode">Carregando...</div>
+        
+        <button class="btn" onclick="copyPix()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            Copiar Código PIX
+        </button>
+    </div>
+    
+    <div class="toast" id="toast">Copiado com sucesso!</div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const invoiceId = urlParams.get('invoiceId') || '12345';
+        const cpfcnpj = urlParams.get('document') || '';
+        const shouldShare = urlParams.get('share') === '1';
+        
+        let pixCodeRaw = '00020126580014BR.GOV.BCB.PIX0136mock-' + invoiceId + '-provedor520400005303986540599.905802BR5920CONECTA FIBRA LTDA6009SAO PAULO62070503***6304ABCD';
+        document.getElementById('pixCode').textContent = pixCodeRaw;
+
+        if(invoiceId && cpfcnpj) {
+            fetch(`/api/central/pagamento/pix/${invoiceId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cpfcnpj })
+            }).then(r => r.json()).then(data => {
+                if(data.pix) {
+                    pixCodeRaw = data.pix;
+                    document.getElementById('pixCode').textContent = pixCodeRaw;
+                }
+                requestNativeShare();
+            }).catch(() => requestNativeShare());
+        }
+
+        function requestNativeShare() {
+            if (shouldShare && window.Android && pixCodeRaw) {
+                setTimeout(() => window.Android.share(pixCodeRaw), 300);
+            }
+        }
+
+        function copyPix() {
+            navigator.clipboard.writeText(pixCodeRaw).then(() => {
+                showToast();
+            }).catch(err => {
+                const textArea = document.createElement("textarea");
+                textArea.value = pixCodeRaw;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+                showToast();
+            });
+        }
+        
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
