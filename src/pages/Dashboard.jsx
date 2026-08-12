@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { api } from '../api';
 import { Shield, Ban, CheckCircle, Clock, AlertTriangle, Plus, Search, ServerOff } from 'lucide-react';
 
@@ -143,10 +144,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {showNewModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
-          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '500px', padding: '2rem' }}>
-            <h2 style={{ marginBottom: '1.5rem' }}>Cadastrar Provedor</h2>
+      {showNewModal && createPortal(
+        <div className="modal-overlay">
+          <div className="glass-panel modal-panel animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="new-provider-title">
+            <h2 id="new-provider-title" style={{ marginBottom: '1.5rem' }}>Cadastrar Provedor</h2>
             <form onSubmit={handleCreate}>
               <div className="input-group">
                 <label className="input-label">Nome da Empresa</label>
@@ -166,7 +167,8 @@ export default function Dashboard() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
