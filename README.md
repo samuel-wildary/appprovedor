@@ -18,6 +18,7 @@ Configure as variáveis:
 - `ADMIN_NAME`: nome do administrador inicial
 - `ADMIN_EMAIL`: e-mail do administrador inicial
 - `ADMIN_PASSWORD`: senha do administrador inicial
+- `CREDENTIALS_ENCRYPTION_KEY`: chave longa usada para criptografar credenciais SGP por provedor
 
 O banco PGlite é armazenado em `.data/`; configure um volume persistente no EasyPanel se os dados administrativos precisarem sobreviver a deploys.
 

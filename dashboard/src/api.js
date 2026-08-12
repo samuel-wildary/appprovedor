@@ -38,7 +38,7 @@ class AdminApi {
     return this.request('/admin/providers'); 
   }
   
-  createProvider(data) { 
+  createProvider(data) {
     return this.request('/admin/providers', { method: 'POST', body: JSON.stringify(data) }); 
   }
   

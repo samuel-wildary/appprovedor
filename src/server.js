@@ -16,6 +16,16 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const HTTPS_PORT = process.env.HTTPS_PORT || 3443;
 const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`;
+const CREDENTIALS_ENCRYPTION_KEY = process.env.CREDENTIALS_ENCRYPTION_KEY || '';
+
+function encryptProviderConfig(config) {
+  if (!CREDENTIALS_ENCRYPTION_KEY) throw new Error('CREDENTIALS_ENCRYPTION_KEY is not configured');
+  const key = crypto.createHash('sha256').update(CREDENTIALS_ENCRYPTION_KEY).digest();
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  const encrypted = Buffer.concat([cipher.update(JSON.stringify(config), 'utf8'), cipher.final()]);
+  return Buffer.concat([iv, cipher.getAuthTag(), encrypted]).toString('base64');
+}
 
 app.use(cors());
 app.use(express.json());
@@ -102,7 +112,7 @@ app.post('/api/admin/login', async (req, res) => {
 // ----------------------------------------------------
 app.get('/api/admin/providers', requireAdmin, async (req, res) => {
   try {
-    const { rows } = await query('SELECT id, name, email, phone, status, created_at, updated_at FROM providers ORDER BY created_at DESC');
+    const { rows } = await query('SELECT id, tenant, name, email, phone, status, created_at, updated_at FROM providers ORDER BY created_at DESC');
     res.json(rows);
   } catch (error) {
     console.error('Error fetching providers:', error);
@@ -111,12 +121,19 @@ app.get('/api/admin/providers', requireAdmin, async (req, res) => {
 });
 
 app.post('/api/admin/providers', requireAdmin, async (req, res) => {
-  const { name, email, phone, status } = req.body;
+  const { tenant, name, email, phone, status, sgp } = req.body;
   const id = crypto.randomUUID();
   try {
+    const sgpConfig = encryptProviderConfig({
+      baseUrl: sgp?.baseUrl || '',
+      apiUser: sgp?.apiUser || '',
+      apiPassword: sgp?.apiPassword || '',
+      apiToken: sgp?.apiToken || '',
+      apiApp: sgp?.apiApp || ''
+    });
     const { rows } = await query(
-      'INSERT INTO providers (id, name, email, phone, status) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [id, name, email, phone || '', status || 'ACTIVE']
+      'INSERT INTO providers (id, tenant, name, email, phone, status, sgp_config) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, tenant, name, email, phone, status',
+      [id, tenant, name, email, phone || '', status || 'ACTIVE', sgpConfig]
     );
     res.status(201).json(rows[0]);
   } catch (error) {
