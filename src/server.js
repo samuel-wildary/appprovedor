@@ -23,7 +23,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, '../public')));
 
 // Initialize Database on Startup
-initializePostgres().catch(console.error);
+async function ensureAdminUser() {
+  const email = process.env.ADMIN_EMAIL?.trim();
+  const password = process.env.ADMIN_PASSWORD;
+  if (!email || !password) return;
+
+  const existing = await query('SELECT id FROM admin_users WHERE email = $1', [email]);
+  if (existing.rows.length > 0) return;
+
+  const { hash, salt } = await hashPassword(password);
+  await query(
+    'INSERT INTO admin_users (id, name, email, password_hash, password_salt) VALUES ($1, $2, $3, $4, $5)',
+    [crypto.randomUUID(), process.env.ADMIN_NAME?.trim() || 'Administrador', email, hash, salt]
+  );
+  console.log('[Database] Usuário administrador inicial criado.');
+}
+
+initializePostgres().then(ensureAdminUser).catch(console.error);
 
 // Auth Middleware
 function requireAdmin(req, res, next) {

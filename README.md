@@ -15,6 +15,9 @@ Configure as variáveis:
 - `SGP_API_PASSWORD`: senha da API SGP
 - `SGP_API_TOKEN`: token da API SGP
 - `SGP_API_APP`: nome da aplicação do token SGP
+- `ADMIN_NAME`: nome do administrador inicial
+- `ADMIN_EMAIL`: e-mail do administrador inicial
+- `ADMIN_PASSWORD`: senha do administrador inicial
 
 O banco PGlite é armazenado em `.data/`; configure um volume persistente no EasyPanel se os dados administrativos precisarem sobreviver a deploys.
 
