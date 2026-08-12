@@ -74,8 +74,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="main-content animate-fade-in">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
+    <div className="animate-fade-in">
+      <div className="page-header-row">
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Shield size={28} color="var(--primary-color)" />
@@ -147,8 +147,8 @@ export default function Dashboard() {
       </div>
 
       {showNewModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 }}>
-          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '500px', padding: '2rem' }}>
+        <div className="modal-overlay">
+          <div className="glass-panel modal-panel animate-fade-in">
             <h2 style={{ marginBottom: '1.5rem' }}>Cadastrar Provedor</h2>
             <form onSubmit={handleCreate}>
               <div className="input-group">

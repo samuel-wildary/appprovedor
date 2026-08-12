@@ -45,6 +45,30 @@ class AdminApi {
   updateStatus(id, status) { 
     return this.request(`/admin/providers/${encodeURIComponent(id)}/status`, { method: 'PUT', body: JSON.stringify({ status }) }); 
   }
+
+  updateProvider(id, data) {
+    return this.request(`/admin/providers/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
+  }
+
+  plans() { return this.request('/admin/plans'); }
+
+  createPlan(data) {
+    return this.request('/admin/plans', { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  payments() { return this.request('/admin/payments'); }
+
+  createPayment(data) {
+    return this.request('/admin/payments', { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  updatePaymentStatus(id, status) {
+    return this.request(`/admin/payments/${encodeURIComponent(id)}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
+  }
+
+  metrics() { return this.request('/admin/metrics'); }
+
+  auditLogs() { return this.request('/admin/audit-logs'); }
 }
 
 export const api = new AdminApi();

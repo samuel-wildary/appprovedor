@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { initializePostgres, query } from './lib/postgres.js';
 import { hashPassword, verifyPassword, generateToken, verifyToken } from './lib/auth.js';
 import { authenticateSgp, fetchSgpInvoices, fetchSgpUsage } from './lib/sgpBridge.js';
+import { listPlans, createPlan, listPayments, createPayment, listMetrics, listAuditLogs, addAuditLog } from './lib/finance.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -163,6 +164,85 @@ app.put('/api/admin/providers/:id/status', requireAdmin, async (req, res) => {
     console.error('Error updating provider status:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+app.put('/api/admin/providers/:id', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { name, email, phone, status } = req.body;
+  try {
+    const { rows } = await query(
+      `UPDATE providers SET name=$1, email=$2, phone=$3, status=$4, updated_at=NOW()
+       WHERE id=$5 RETURNING id, tenant, name, email, phone, status`,
+      [name, email, phone || '', status, id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Provider not found' });
+    await addAuditLog('provider.update', `Provedor ${name} atualizado`);
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('Error updating provider:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ----------------------------------------------------
+// Routes: Plans / Payments / Metrics / Audit
+// ----------------------------------------------------
+app.get('/api/admin/plans', requireAdmin, async (_req, res) => {
+  try { res.json(await listPlans()); } catch (e) { res.status(500).json({ error: 'Internal server error' }); }
+});
+
+app.post('/api/admin/plans', requireAdmin, async (req, res) => {
+  try {
+    const plan = await createPlan(req.body);
+    await addAuditLog('plan.create', `Plano ${plan.name} criado`);
+    res.status(201).json(plan);
+  } catch (e) {
+    console.error('Error creating plan:', e);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/api/admin/payments', requireAdmin, async (_req, res) => {
+  try { res.json(await listPayments()); } catch (e) { res.status(500).json({ error: 'Internal server error' }); }
+});
+
+app.post('/api/admin/payments', requireAdmin, async (req, res) => {
+  try {
+    const payment = await createPayment(req.body);
+    await addAuditLog('payment.create', `Mensalidade criada (provedor ${req.body.providerId})`);
+    res.status(201).json(payment);
+  } catch (e) {
+    console.error('Error creating payment:', e);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.put('/api/admin/payments/:id/status', requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  if (!['PENDING', 'PAID', 'OVERDUE', 'CANCELLED'].includes(status)) {
+    return res.status(400).json({ error: 'Invalid status' });
+  }
+  try {
+    const { rows } = await query(
+      `UPDATE payments SET status=$1, paid_at = CASE WHEN $1='PAID' THEN NOW() ELSE paid_at END, updated_at=NOW()
+       WHERE id=$2 RETURNING *`,
+      [status, id]
+    );
+    if (rows.length === 0) return res.status(404).json({ error: 'Payment not found' });
+    await addAuditLog('payment.status', `Mensalidade ${id.slice(0, 8)} -> ${status}`);
+    res.json(rows[0]);
+  } catch (e) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/api/admin/metrics', requireAdmin, async (_req, res) => {
+  try { res.json(await listMetrics()); } catch (e) { res.status(500).json({ error: 'Internal server error' }); }
+});
+
+app.get('/api/admin/audit-logs', requireAdmin, async (_req, res) => {
+  try { res.json(await listAuditLogs()); } catch (e) { res.status(500).json({ error: 'Internal server error' }); }
 });
 
 // ----------------------------------------------------
