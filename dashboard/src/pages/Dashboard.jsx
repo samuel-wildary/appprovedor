@@ -10,7 +10,10 @@ export default function Dashboard() {
   
   // New provider modal state
   const [showNewModal, setShowNewModal] = useState(false);
-  const [newProv, setNewProv] = useState({ name: '', email: '', phone: '' });
+  const [newProv, setNewProv] = useState({
+    tenant: '', name: '', email: '', phone: '',
+    sgp: { baseUrl: '', apiUser: '', apiPassword: '', apiToken: '', apiApp: '' }
+  });
   const [saving, setSaving] = useState(false);
 
   const fetchProviders = async () => {
@@ -44,7 +47,7 @@ export default function Dashboard() {
     try {
       await api.createProvider({ ...newProv, status: 'ACTIVE' });
       setShowNewModal(false);
-      setNewProv({ name: '', email: '', phone: '' });
+      setNewProv({ tenant: '', name: '', email: '', phone: '', sgp: { baseUrl: '', apiUser: '', apiPassword: '', apiToken: '', apiApp: '' } });
       fetchProviders();
     } catch (err) {
       alert('Erro ao criar: ' + err.message);
@@ -72,8 +75,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="main-content animate-fade-in">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
+    <div className="animate-fade-in">
+      <div className="page-header-row">
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Shield size={28} color="var(--primary-color)" />
@@ -115,7 +118,7 @@ export default function Dashboard() {
                   <tr key={prov.id}>
                     <td>
                       <div style={{ fontWeight: '500', color: 'white' }}>{prov.name}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>ID: {prov.id.split('-')[0]}...</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Código: {prov.tenant || prov.id.split('-')[0]}</div>
                     </td>
                     <td>
                       <div>{prov.email}</div>
@@ -150,6 +153,10 @@ export default function Dashboard() {
             <h2 id="new-provider-title" style={{ marginBottom: '1.5rem' }}>Cadastrar Provedor</h2>
             <form onSubmit={handleCreate}>
               <div className="input-group">
+                <label className="input-label">Código do aplicativo (opcional)</label>
+                <input type="text" className="input-field" placeholder="Será gerado automaticamente" value={newProv.tenant} onChange={e => setNewProv({...newProv, tenant: e.target.value})} />
+              </div>
+              <div className="input-group">
                 <label className="input-label">Nome da Empresa</label>
                 <input type="text" className="input-field" value={newProv.name} onChange={e => setNewProv({...newProv, name: e.target.value})} required />
               </div>
@@ -161,6 +168,19 @@ export default function Dashboard() {
                 <label className="input-label">Telefone (Opcional)</label>
                 <input type="text" className="input-field" value={newProv.phone} onChange={e => setNewProv({...newProv, phone: e.target.value})} />
               </div>
+              <h3 style={{ marginBottom: '1rem' }}>Credenciais SGP</h3>
+              {[
+                ['baseUrl', 'URL do SGP'],
+                ['apiUser', 'Usuário da API'],
+                ['apiPassword', 'Senha da API'],
+                ['apiToken', 'Token da API'],
+                ['apiApp', 'Aplicação da API']
+              ].map(([field, label]) => (
+                <div className="input-group" key={field}>
+                  <label className="input-label">{label}</label>
+                  <input type={field === 'apiPassword' || field === 'apiToken' ? 'password' : 'text'} className="input-field" value={newProv.sgp[field]} onChange={e => setNewProv({...newProv, sgp: {...newProv.sgp, [field]: e.target.value}})} required={field === 'baseUrl'} />
+                </div>
+              ))}
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                 <button type="button" className="btn btn-danger" onClick={() => setShowNewModal(false)}>Cancelar</button>
                 <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Salvando...' : 'Criar Provedor'}</button>

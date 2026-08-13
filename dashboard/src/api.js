@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://sistema-app-provedor.5mos1l.easypanel.host/api';
 
 class AdminApi {
   constructor() { 
@@ -38,13 +38,37 @@ class AdminApi {
     return this.request('/admin/providers'); 
   }
   
-  createProvider(data) { 
+  createProvider(data) {
     return this.request('/admin/providers', { method: 'POST', body: JSON.stringify(data) }); 
   }
   
   updateStatus(id, status) { 
     return this.request(`/admin/providers/${encodeURIComponent(id)}/status`, { method: 'PUT', body: JSON.stringify({ status }) }); 
   }
+
+  updateProvider(id, data) {
+    return this.request(`/admin/providers/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) });
+  }
+
+  plans() { return this.request('/admin/plans'); }
+
+  createPlan(data) {
+    return this.request('/admin/plans', { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  payments() { return this.request('/admin/payments'); }
+
+  createPayment(data) {
+    return this.request('/admin/payments', { method: 'POST', body: JSON.stringify(data) });
+  }
+
+  updatePaymentStatus(id, status) {
+    return this.request(`/admin/payments/${encodeURIComponent(id)}/status`, { method: 'PUT', body: JSON.stringify({ status }) });
+  }
+
+  metrics() { return this.request('/admin/metrics'); }
+
+  auditLogs() { return this.request('/admin/audit-logs'); }
 }
 
 export const api = new AdminApi();

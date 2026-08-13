@@ -231,27 +231,142 @@ select.input-field option {
   width: 100%;
 }
 
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
+/* SaaS layout */
+.saas-layout { display: flex; min-height: 100vh; }
+
+.saas-sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--surface-border);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 0.75rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.saas-brand {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  padding: 0 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--surface-border);
+  margin-bottom: 1rem;
+}
+
+.saas-brand b { color: var(--primary-color); }
+
+.saas-nav { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; }
+
+.saas-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.saas-nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+.saas-nav-item.active { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.saas-logout { color: #f87171; }
+
+.saas-main { flex: 1; padding: 2rem; overflow-y: auto; max-width: 1300px; margin: 0 auto; width: 100%; }
+
+/* Metrics */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.stat-card {
+  background: var(--surface-color);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(59,130,246,0.15); color: #60a5fa;
+  flex-shrink: 0;
+}
+.stat-icon.green { background: rgba(16,185,129,0.15); color: #34d399; }
+.stat-icon.red { background: rgba(239,68,68,0.15); color: #f87171; }
+.stat-icon.yellow { background: rgba(245,158,11,0.15); color: #fbbf24; }
+.stat-icon.blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
+
+.stat-value { font-size: 1.5rem; font-weight: 700; color: white; }
+.stat-label { font-size: 0.8rem; color: var(--text-secondary); }
+
+/* Page helpers */
+.page-subtitle { color: var(--text-secondary); margin-bottom: 0.5rem; }
+.page-header-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
+.loading-box { padding: 3rem; text-align: center; color: var(--text-secondary); }
+.error-box { background: rgba(239,68,68,0.1); border-left: 4px solid var(--danger-color); padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem; color: #fca5a5; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50;
   padding: 1rem;
   overflow-y: auto;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  z-index: 50;
 }
 
 .modal-panel {
-  width: 100%;
-  max-width: 500px;
+  width: 100%; max-width: 520px; padding: 2rem;
   max-height: calc(100dvh - 2rem);
-  padding: 2rem;
-  margin: 0;
   overflow-y: auto;
+  margin: 0;
   scrollbar-width: thin;
   scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+}
+
+.modal-panel h2 {
+  position: sticky;
+  top: -2rem;
+  z-index: 2;
+  padding: 1.5rem 0 1rem;
+  margin: -2rem 0 1.5rem !important;
+  background: #1e293b;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.modal-panel form > div:last-child {
+  position: sticky;
+  bottom: -2rem;
+  margin: 2rem -2rem -2rem;
+  padding: 1rem 2rem;
+  background: rgba(15, 23, 42, 0.96);
+  border-top: 1px solid var(--surface-border);
+}
+
+.select-compact { width: auto; padding: 0.4rem 2rem 0.4rem 0.8rem; font-size: 0.875rem; }
+
+@media (max-width: 768px) {
+  .saas-sidebar { width: 64px; }
+  .saas-brand span, .saas-nav-item { font-size: 0; }
+  .saas-nav-item { justify-content: center; padding: 0.75rem; }
+  .saas-nav-item svg { flex-shrink: 0; }
 }
