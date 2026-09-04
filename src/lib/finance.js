@@ -40,8 +40,8 @@ export async function createPayment(data) {
 export async function listMetrics() {
   const [providers, plans, payments] = await Promise.all([
     query(`SELECT COUNT(*) FILTER (WHERE status='ACTIVE')::int AS active,
-                  COUNT(*) FILTER (WHERE status='BLOCKED')::int AS blocked,
-                  COUNT(*) FILTER (WHERE status='OVERDUE')::int AS overdue,
+                  COUNT(*) FILTER (WHERE status IN ('BLOCKED', 'SUSPENDED'))::int AS suspended,
+                  COUNT(*) FILTER (WHERE status='CANCELLED')::int AS cancelled,
                   COUNT(*)::int AS total
            FROM providers`),
     query('SELECT COUNT(*)::int AS total FROM plans WHERE active'),
